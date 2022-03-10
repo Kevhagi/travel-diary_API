@@ -109,7 +109,6 @@ exports.login = async (req,res) => {
             status : 'Success',
             data : {
                 id : checkUser.id,
-                fullName : checkUser.fullName,
                 email : checkUser.email,
                 token
             }
