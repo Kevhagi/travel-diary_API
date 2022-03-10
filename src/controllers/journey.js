@@ -4,6 +4,17 @@ exports.addJourney = async (req,res) => {
     try {
         const data = req.body
 
+        let checkJourney = await Journey.findAll({
+            where : {
+                title : data.title
+            }
+        })
+        if (checkJourney) {
+            return res.status(400).send({
+                message : "Failed, this title is already exist"
+            })
+        }
+
         let inputJourney = await Journey.create({
             title : data.title,
             desc : data.desc,

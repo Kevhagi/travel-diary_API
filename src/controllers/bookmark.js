@@ -7,6 +7,18 @@ exports.addBookmark = async (req,res) => {
         const token = req.header("Authorization")
         var decoded = jwt_decode(token)
 
+        var checkExist = await Bookmark.findAll({
+            where : {
+                userID : decoded.id,
+                journeyID : req.body.idJourney
+            }
+        })
+        if(checkExist){
+            return res.status(400).send({
+                message : "This bookmark is already in your list"
+            })
+        }
+
         var saveBookmark = await Bookmark.create({
             userID : decoded.id,
             journeyID : req.body.idJourney
