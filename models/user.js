@@ -12,6 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Journey, {
+        as : 'author',
+        foreignKey : {
+          name : 'userID'
+        }
+      })
+
+      User.hasMany(models.Bookmark, {
         as : 'user',
         foreignKey : {
           name : 'userID'

@@ -32,7 +32,7 @@ exports.getJourneys = async (req,res) => {
                 {
                     model : User,
                     required : true,
-                    as : 'user',
+                    as : 'author',
                     attributes : {
                         exclude : ['password','image','createdAt','updatedAt']    
                     }
@@ -45,7 +45,7 @@ exports.getJourneys = async (req,res) => {
                 return {
                     id : gura.id,
                     title : gura.title,
-                    userId : gura.user,
+                    author : gura.author,
                     desc : gura.desc
                 }
             })
@@ -58,3 +58,42 @@ exports.getJourneys = async (req,res) => {
     }
 }
 
+exports.getPostedJourneys = async (req,res) => {
+    try {
+        const {id} = req.params
+
+        var allPosted = await Journey.findAll({
+            where : {
+                userID : id
+            },
+            include : [
+                {
+                    model : User,
+                    required : true,
+                    as : 'author',
+                    attributes : {
+                        exclude : ['password','image','createdAt','updatedAt']
+                    }
+                }
+            ]
+        })
+
+        res.status(200).send({
+            data : allPosted.map((gura, index) => {
+                return {
+                    id : gura.id,
+                    title : gura.title,
+                    author : gura.author,
+                    desc : gura.desc
+                }
+            })
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message : "Server Error"
+        })
+    }
+}

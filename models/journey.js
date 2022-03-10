@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Journey.belongsTo(models.User, { 
-        as : 'user',
+        as : 'author',
         foreignKey : {
           name : "userID"
         }

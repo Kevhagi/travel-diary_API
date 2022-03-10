@@ -121,3 +121,27 @@ exports.login = async (req,res) => {
         })
     }
 }
+
+exports.getUser = async (req,res) => {
+    try {
+        const id = req.params
+
+        var userDetails = await User.findOne({
+            where : id 
+        })
+
+        res.status(200).send({
+            id : userDetails.id,
+            fullName : userDetails.fullName,
+            email : userDetails.email,
+            phone : userDetails.phone
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message : "Server Error"
+        })
+    }
+}
