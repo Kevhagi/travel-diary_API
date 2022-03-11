@@ -29,8 +29,9 @@ exports.register = async (req,res) => {
         })
         if(checkUser !== null){
             return res.status(400).send({
-                status : 'Failed',
-                message : 'Email is already registered'
+                error : {
+                    message : 'Email is already registered'    
+                }
             })
         }
 
@@ -108,7 +109,6 @@ exports.login = async (req,res) => {
             status : 'Success',
             data : {
                 id : checkUser.id,
-                email : checkUser.email,
                 token
             }
         })
@@ -144,3 +144,32 @@ exports.getUser = async (req,res) => {
         })
     }
 }
+
+exports.checkAuth = async (req, res) => {
+    try {
+        const id = req.user.id;
+  
+        const dataUser = await User.findOne({
+            where: {
+                id
+            }
+        })
+  
+        if (!dataUser) {
+            return res.status(400).send({
+                message : "Auth not found"
+            })
+        }
+  
+        res.status(200).send({
+            user: {
+                id: dataUser.id
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({
+            message: "Server Error"
+        })
+    }
+};

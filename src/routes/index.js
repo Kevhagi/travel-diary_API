@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 //Import controller
-const { register, login, getUser } = require('../controllers/user')
+const { register, login, getUser, checkAuth } = require('../controllers/user')
 const { addJourney, getJourneys, getPostedJourneys } = require('../controllers/journey')
 const { addBookmark, getBookmarks } = require('../controllers/bookmark')
 
@@ -14,6 +14,7 @@ const { auth } = require('../middlewares/auth')
 router.post('/register', register)
 router.post('/login', login)
 router.get('/profile/:id', getUser)
+router.get('/check-auth', auth, checkAuth)
 
 //Journey
 router.post('/journey', auth, addJourney)
