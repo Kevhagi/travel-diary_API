@@ -82,26 +82,25 @@ exports.login = async (req,res) => {
         })
         if(checkUser === null){
             return res.status(400).send({
-                status : 'Failed',
-                message : 'Login failed, email is not registered'
+                error : {
+                    message : 'Email is not registered'
+                }
+                
             })
         }
 
         const isValid = await bcrypt.compare(req.body.password, checkUser.password)
         if(!isValid) {
             return res.status(400).send({
-                status : 'Failed',
-                message : 'Credentials Error'
+                error : {
+                    message : 'Credentials Error'    
+                }
             })
         }
 
         const token = jwt.sign(
             {
-                id : checkUser.id,
-                email : checkUser.email,
-                fullName : checkUser.fullName,
-                image : checkUser.image,
-                phone : checkUser.phone
+                id : checkUser.id
             }, process.env.TOKEN_KEY
         )
 
