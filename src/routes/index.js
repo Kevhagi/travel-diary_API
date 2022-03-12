@@ -4,7 +4,7 @@ const router = express.Router()
 
 //Import controller
 const { register, login, getUser, checkAuth } = require('../controllers/user')
-const { addJourney, getJourneys, getPostedJourneys } = require('../controllers/journey')
+const { addJourney, getJourneys, getPostedJourneys, getJourney } = require('../controllers/journey')
 const { handleBookmark, getBookmarks } = require('../controllers/bookmark')
 
 //Middlewares
@@ -20,6 +20,7 @@ router.get('/check-auth', auth, checkAuth)
 //Journey
 router.post('/journey', auth, uploadFile("image"), addJourney)
 router.get('/journeys', getJourneys)
+router.get('/journey/:id', getJourney)
 router.get('/profile/:id/journey', getPostedJourneys)
 
 //Bookmark

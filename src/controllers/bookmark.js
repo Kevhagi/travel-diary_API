@@ -92,7 +92,8 @@ exports.getBookmarks = async (req,res) => {
                         phone : gura.journey.author.phone
                     },
                     desc : gura.journey.desc,
-                    journeyID : gura.journey.id
+                    journeyID : gura.journey.id,
+                    image : process.env.FILE_PATH + gura.journey.image
                 }
             })
         })
