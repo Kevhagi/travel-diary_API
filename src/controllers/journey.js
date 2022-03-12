@@ -62,7 +62,8 @@ exports.getJourneys = async (req,res) => {
                     id : gura.id,
                     title : gura.title,
                     author : gura.author,
-                    desc : gura.desc
+                    desc : gura.desc,
+                    updatedAt : gura.updatedAt
                 }
             })
         })
@@ -100,7 +101,8 @@ exports.getPostedJourneys = async (req,res) => {
                     id : gura.id,
                     title : gura.title,
                     author : gura.author,
-                    desc : gura.desc
+                    desc : gura.desc,
+                    updatedAt : gura.updatedAt
                 }
             })
         })

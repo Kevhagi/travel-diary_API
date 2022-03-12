@@ -5,7 +5,7 @@ const router = express.Router()
 //Import controller
 const { register, login, getUser, checkAuth } = require('../controllers/user')
 const { addJourney, getJourneys, getPostedJourneys } = require('../controllers/journey')
-const { addBookmark, getBookmarks } = require('../controllers/bookmark')
+const { handleBookmark, getBookmarks } = require('../controllers/bookmark')
 
 //Middlewares
 const { auth } = require('../middlewares/auth')
@@ -23,7 +23,7 @@ router.get('/journeys', getJourneys)
 router.get('/profile/:id/journey', getPostedJourneys)
 
 //Bookmark
-router.post('/bookmark', auth, addBookmark)
+router.post('/bookmark', auth, handleBookmark)
 router.get('/bookmarks/:id', getBookmarks) //profile id
 
 module.exports = router

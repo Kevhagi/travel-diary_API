@@ -2,43 +2,54 @@ const { Bookmark, User, Journey } = require('../../models')
 
 const jwt_decode = require('jwt-decode')
 
-exports.addBookmark = async (req,res) => {
+exports.handleBookmark = async (req,res) => {
     try {
         const token = req.header("Authorization")
         var decoded = jwt_decode(token)
 
-        var checkExist = await Bookmark.findAll({
+        console.log(req.body.idJourney);
+
+        var checkExist = await Bookmark.findOne({
             where : {
                 userID : decoded.id,
                 journeyID : req.body.idJourney
             }
         })
-        if(checkExist){
-            return res.status(400).send({
-                message : "This bookmark is already in your list"
+
+        console.log(checkExist);
+        if (checkExist === null) {
+            var saveBookmark = await Bookmark.create({
+                userID : decoded.id,
+                journeyID : req.body.idJourney
+            })
+
+            var getUserDetails = await User.findOne({
+                where : {
+                    id : decoded.id
+                }
+            })
+
+            res.status(200).send({
+                journeyID : saveBookmark.journeyID,
+                userID : {
+                    id : getUserDetails.id,
+                    fullName : getUserDetails.fullName,
+                    email : getUserDetails.email,
+                    phone : getUserDetails.phone
+                },
+                message : "Bookmark added"
+            })
+        } else if(checkExist.journeyID === req.body.idJourney){
+            var deleteBookmark = await Bookmark.destroy({
+                where : {
+                    id : checkExist.id
+                }
+            })
+
+            return res.status(200).send({
+                message : "Bookmark deleted"
             })
         }
-
-        var saveBookmark = await Bookmark.create({
-            userID : decoded.id,
-            journeyID : req.body.idJourney
-        })
-
-        var getUserDetails = await User.findOne({
-            where : {
-                id : decoded.id
-            }
-        })
-
-        res.status(200).send({
-            journeyID : saveBookmark.journeyID,
-            userID : {
-                id : getUserDetails.id,
-                fullName : getUserDetails.fullName,
-                email : getUserDetails.email,
-                phone : getUserDetails.phone
-            }
-        })
     } catch (error) {
         console.log(error);
         res.status(400).send({
@@ -57,12 +68,14 @@ exports.getBookmarks = async (req,res) => {
             },
             include : [
                 {
-                    model : User,
-                    as : 'user'
-                },
-                {
                     model : Journey,
-                    as : 'journey'
+                    as : 'journey',
+                    include : [
+                        {
+                            model : User,
+                            as : 'author'
+                        }
+                    ]
                 }
             ]
         })
@@ -72,13 +85,14 @@ exports.getBookmarks = async (req,res) => {
                 return {
                     id : gura.id,
                     title : gura.journey.title,
-                    userID : {
-                        id : gura.user.id,
-                        fullName : gura.user.fullName,
-                        email : gura.user.email,
-                        phone : gura.user.phone
+                    author : {
+                        id : gura.journey.author.id,
+                        fullName : gura.journey.author.fullName,
+                        email : gura.journey.author.email,
+                        phone : gura.journey.author.phone
                     },
-                    desc : gura.journey.desc
+                    desc : gura.journey.desc,
+                    journeyID : gura.journey.id
                 }
             })
         })
