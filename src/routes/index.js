@@ -9,6 +9,7 @@ const { addBookmark, getBookmarks } = require('../controllers/bookmark')
 
 //Middlewares
 const { auth } = require('../middlewares/auth')
+const { uploadFile } = require('../middlewares/uploadFile')
 
 //User
 router.post('/register', register)
@@ -17,7 +18,7 @@ router.get('/profile/:id', getUser)
 router.get('/check-auth', auth, checkAuth)
 
 //Journey
-router.post('/journey', auth, addJourney)
+router.post('/journey', auth, uploadFile("image"), addJourney)
 router.get('/journeys', getJourneys)
 router.get('/profile/:id/journey', getPostedJourneys)
 

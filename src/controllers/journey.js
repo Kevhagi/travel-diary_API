@@ -4,28 +4,33 @@ exports.addJourney = async (req,res) => {
     try {
         const data = req.body
 
-        let checkJourney = await Journey.findAll({
+        console.log(data.userID);
+
+        let checkJourney = await Journey.findOne({
             where : {
                 title : data.title
             }
         })
         if (checkJourney) {
             return res.status(400).send({
-                message : "Failed, this title is already exist"
+                message : "This title is already exist"
             })
         }
 
         let inputJourney = await Journey.create({
-            title : data.title,
-            desc : data.desc,
-            userID : data.userId.id
+            ...data,
+            image : req.file.filename
         })
 
+        inputJourney = JSON.parse(JSON.stringify(inputJourney))
+
+        inputJourney = {
+            ...inputJourney,
+            image : process.env.FILE_PATH + inputJourney.image
+        }
+
         res.status(200).send({
-            id : inputJourney.id,
-            title : inputJourney.title,
-            userId : data.userId,
-            desc : inputJourney.desc
+            inputJourney
         })
     } catch (error) {
         console.log(error);
