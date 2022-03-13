@@ -3,6 +3,8 @@ const { User } = require('../../models')
 const Joi = require('joi')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const path = require('path')
+const fs = require('fs')
 
 exports.register = async (req,res) => {
     const schema = Joi.object({
@@ -150,6 +152,48 @@ exports.getUser = async (req,res) => {
         res.status(400).send({
             message : "Server Error"
         })
+    }
+}
+
+exports.uploadImage = async (req,res) => {
+    try {
+        const { id } = req.params
+
+        const data = {
+            image : req.file.filename
+        }
+
+        const search = await User.findOne({
+            where : {
+                id
+            }
+        })
+        if (search.image === null){
+            await User.update(data, {
+                where : {
+                    id
+                }
+            })
+        } else if (search.image !== null){
+            const removeImage = (filePath) => {
+                filePath = path.join(__dirname, '../../uploads/', filePath)
+                fs.unlink(filePath, err => console.log(err))
+            }
+            removeImage(search.image)
+
+            await User.update(data, {
+                where : {
+                    id
+                }
+            })
+        }
+
+        res.status(200).send({
+            image : process.env.FILE_PATH + data.image
+        })
+        
+    } catch (error) {
+        console.log(error);
     }
 }
 

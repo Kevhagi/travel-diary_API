@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 //Import controller
-const { register, login, getUser, checkAuth } = require('../controllers/user')
+const { register, login, getUser, checkAuth, uploadImage } = require('../controllers/user')
 const { addJourney, getJourneys, getPostedJourneys, getJourney } = require('../controllers/journey')
 const { handleBookmark, getBookmarks } = require('../controllers/bookmark')
 
@@ -15,6 +15,7 @@ const { uploadFile } = require('../middlewares/uploadFile')
 router.post('/register', register)
 router.post('/login', login)
 router.get('/profile/:id', getUser)
+router.patch('/profile/:id', uploadFile("image"), uploadImage)
 router.get('/check-auth', auth, checkAuth)
 
 //Journey
