@@ -129,11 +129,19 @@ exports.getUser = async (req,res) => {
             where : id 
         })
 
+        let image
+        if (userDetails.image === null){
+            image = null
+        } else if (userDetails.image !== null) {
+            image = process.env.FILE_PATH + userDetails.image
+        }
+
         res.status(200).send({
             id : userDetails.id,
             fullName : userDetails.fullName,
             email : userDetails.email,
-            phone : userDetails.phone
+            phone : userDetails.phone,
+            image
         })
 
 
