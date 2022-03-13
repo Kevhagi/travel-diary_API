@@ -29,25 +29,38 @@ exports.handleBookmark = async (req,res) => {
                 }
             })
 
+            var getJourney = await Journey.findOne({
+                where : {
+                    id : req.body.idJourney
+                }
+            })
+
             res.status(200).send({
                 journeyID : saveBookmark.journeyID,
+                title : getJourney.title,
                 userID : {
                     id : getUserDetails.id,
                     fullName : getUserDetails.fullName,
                     email : getUserDetails.email,
                     phone : getUserDetails.phone
                 },
-                message : "Bookmark added"
+                message : `Journey "${getJourney.title}" added to your bookmark.`
             })
         } else if(checkExist.journeyID === req.body.idJourney){
-            var deleteBookmark = await Bookmark.destroy({
+            await Bookmark.destroy({
                 where : {
                     id : checkExist.id
                 }
             })
 
+            var getJourneyDelete = await Journey.findOne({
+                where : {
+                    id : req.body.idJourney
+                }
+            })
+
             return res.status(200).send({
-                message : "Bookmark deleted"
+                message : `Journey "${getJourneyDelete.title}" deleted from your bookmark.`,
             })
         }
     } catch (error) {
@@ -66,6 +79,7 @@ exports.getBookmarks = async (req,res) => {
             where : {
                 userID : id
             },
+            order: [['updatedAt' , 'DESC']],
             include : [
                 {
                     model : Journey,
