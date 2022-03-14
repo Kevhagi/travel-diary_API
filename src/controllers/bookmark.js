@@ -7,8 +7,6 @@ exports.handleBookmark = async (req,res) => {
         const token = req.header("Authorization")
         var decoded = jwt_decode(token)
 
-        console.log(req.body.idJourney);
-
         var checkExist = await Bookmark.findOne({
             where : {
                 userID : decoded.id,
@@ -16,7 +14,6 @@ exports.handleBookmark = async (req,res) => {
             }
         })
 
-        console.log(checkExist);
         if (checkExist === null) {
             var saveBookmark = await Bookmark.create({
                 userID : decoded.id,
@@ -44,7 +41,7 @@ exports.handleBookmark = async (req,res) => {
                     email : getUserDetails.email,
                     phone : getUserDetails.phone
                 },
-                message : `Journey "${getJourney.title}" added to your bookmark.`
+                message : `"${getJourney.title}" added to your bookmark.`
             })
         } else if(checkExist.journeyID === req.body.idJourney){
             await Bookmark.destroy({
@@ -60,7 +57,8 @@ exports.handleBookmark = async (req,res) => {
             })
 
             return res.status(200).send({
-                message : `Journey "${getJourneyDelete.title}" deleted from your bookmark.`,
+                title : getJourneyDelete.title,
+                message : `"${getJourneyDelete.title}" deleted from your bookmark.`
             })
         }
     } catch (error) {

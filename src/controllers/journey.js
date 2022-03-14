@@ -7,8 +7,6 @@ exports.addJourney = async (req,res) => {
     try {
         const data = req.body
 
-        console.log(data.userID);
-
         let checkJourney = await Journey.findOne({
             where : {
                 title : data.title
