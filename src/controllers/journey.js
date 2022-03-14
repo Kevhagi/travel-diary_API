@@ -1,5 +1,8 @@
 const { Journey, User } = require('../../models')
 
+const path = require('path')
+const fs = require('fs')
+
 exports.addJourney = async (req,res) => {
     try {
         const data = req.body
@@ -32,6 +35,46 @@ exports.addJourney = async (req,res) => {
         res.status(200).send({
             inputJourney
         })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message : "Server Error"
+        })
+    }
+}
+
+exports.deleteJourney = async (req,res) => {
+    try {
+        const {id} = req.params
+
+        const findIndex = await Journey.findOne({
+            where : {
+                id
+            }
+        })
+        if(findIndex === null){
+            return res.status(400).send({
+                status : 'Failed',
+                message : 'ID not found'
+            })
+        } else if (findIndex !== null){
+            const removeImage = (filePath) => {
+                filePath = path.join(__dirname, '../../uploads/', filePath)
+                fs.unlink(filePath, err => console.log(err))
+            }
+            removeImage(findIndex.image)
+
+            await Journey.destroy({
+                where : {
+                    id
+                }
+            })
+
+            res.status(200).send({
+                message : `Journey "${findIndex.title}" successfully removed`
+            })
+        }
+
     } catch (error) {
         console.log(error);
         res.status(400).send({
