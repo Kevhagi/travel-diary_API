@@ -238,6 +238,18 @@ exports.editJourney = async (req,res) => {
             image : req.file.filename
         }
 
+        const search = await Journey.findOne({
+            where : {
+                id
+            }
+        })
+
+        const removeImage = (filePath) => {
+            filePath = path.join(__dirname, '../../uploads/', filePath)
+            fs.unlink(filePath, err => console.log(err))
+        }
+        removeImage(search.image)
+
         await Journey.update(data, {
             where : {
                 id
