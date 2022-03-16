@@ -200,3 +200,58 @@ exports.getPostedJourneys = async (req,res) => {
         })
     }
 }
+
+exports.editJourneyWithoutImage = async (req,res) => {
+    try {
+        const { id } = req.params
+
+        const data = {
+            title : req.body.title,
+            desc : req.body.desc
+        }
+
+        await Journey.update(data, {
+            where : {
+                id
+            }
+        })
+
+        res.status(200).send({
+            message : `Journey ${id} successfully updated`
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message : "Server Error"
+        })
+    }
+}
+
+exports.editJourney = async (req,res) => {
+    try {
+        const { id } = req.params
+
+        const data = {
+            title : req.body.title,
+            desc : req.body.desc,
+            image : req.file.filename
+        }
+
+        await Journey.update(data, {
+            where : {
+                id
+            }
+        })
+
+        res.status(200).send({
+            message : `Journey ${id} successfully updated`
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            message : "Server Error"
+        })
+    }
+}

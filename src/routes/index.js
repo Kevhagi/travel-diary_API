@@ -4,7 +4,7 @@ const router = express.Router()
 
 //Import controller
 const { register, login, getUser, checkAuth, uploadImage } = require('../controllers/user')
-const { addJourney, getJourneys, getPostedJourneys, getJourney, deleteJourney } = require('../controllers/journey')
+const { addJourney, getJourneys, getPostedJourneys, getJourney, deleteJourney, editJourneyWithoutImage, editJourney } = require('../controllers/journey')
 const { handleBookmark, getBookmarks } = require('../controllers/bookmark')
 
 //Middlewares
@@ -20,6 +20,8 @@ router.get('/check-auth', auth, checkAuth)
 
 //Journey
 router.post('/journey', auth, uploadFile("image"), addJourney)
+router.patch('/journey-noimage/:id', auth, editJourneyWithoutImage)
+router.patch('/journey/:id', auth, uploadFile("image"), editJourney)
 router.delete('/journey/:id', auth, deleteJourney)
 router.get('/journeys', getJourneys)
 router.get('/journey/:id', getJourney)
