@@ -1,7 +1,5 @@
 const { Journey, User } = require('../../models')
 
-const path = require('path')
-const fs = require('fs')
 const cloudinary = require('../utils/cloudinary');
 
 exports.addJourney = async (req,res) => {
@@ -63,11 +61,9 @@ exports.deleteJourney = async (req,res) => {
                 message : 'ID not found'
             })
         } else if (findIndex !== null){
-            const removeImage = (filePath) => {
-                filePath = path.join(__dirname, '../../uploads/', filePath)
-                fs.unlink(filePath, err => console.log(err))
-            }
-            removeImage(findIndex.image)
+            await cloudinary.uploader.destroy(findIndex.image, function(error, result) {
+                console.log(result, error);
+            })
 
             await Journey.destroy({
                 where : {
@@ -174,6 +170,7 @@ exports.getPostedJourneys = async (req,res) => {
             where : {
                 userID : id
             },
+            order: [['updatedAt' , 'DESC']],
             include : [
                 {
                     model : User,
@@ -239,23 +236,37 @@ exports.editJourney = async (req,res) => {
     try {
         const { id } = req.params
 
-        const data = {
-            title : req.body.title,
-            desc : req.body.desc,
-            image : req.file.filename
-        }
-
         const search = await Journey.findOne({
             where : {
                 id
             }
         })
 
+        if (search.image !== null){
+            await cloudinary.uploader.destroy(search.image, function(error, result) {
+                console.log(result, error);
+            })
+        }
+
+        /* remove image locally use fs & path
         const removeImage = (filePath) => {
             filePath = path.join(__dirname, '../../uploads/', filePath)
             fs.unlink(filePath, err => console.log(err))
         }
         removeImage(search.image)
+        */
+
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'traveldiary',
+            use_filename: true,
+            unique_filename: true,
+        });
+
+        const data = {
+            title : req.body.title,
+            desc : req.body.desc,
+            image : result.public_id
+        }
 
         await Journey.update(data, {
             where : {

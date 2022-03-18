@@ -3,8 +3,6 @@ const { User } = require('../../models')
 const Joi = require('joi')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const path = require('path')
-const fs = require('fs')
 const cloudinary = require('../utils/cloudinary');
 
 exports.register = async (req,res) => {
