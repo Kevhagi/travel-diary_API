@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const path = require('path')
 const fs = require('fs')
+const cloudinary = require('../utils/cloudinary');
 
 exports.register = async (req,res) => {
     const schema = Joi.object({
@@ -159,28 +160,46 @@ exports.uploadImage = async (req,res) => {
     try {
         const { id } = req.params
 
-        const data = {
-            image : req.file.filename
-        }
-
         const search = await User.findOne({
             where : {
                 id
             }
         })
+
         if (search.image === null){
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'traveldiary',
+                use_filename: true,
+                unique_filename: true,
+            });
+            const data = {
+                image : result.public_id
+            }
             await User.update(data, {
                 where : {
                     id
                 }
             })
         } else if (search.image !== null){
+            /* remove image locally
             const removeImage = (filePath) => {
                 filePath = path.join(__dirname, '../../uploads/', filePath)
                 fs.unlink(filePath, err => console.log(err))
             }
             removeImage(search.image)
+            */
 
+            await cloudinary.uploader.destroy(search.image, function(error, result) {
+                console.log(result, error);
+            })
+            const addNew = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'traveldiary',
+                use_filename: true,
+                unique_filename: true,
+            });
+            const data = {
+                image : addNew.public_id
+            }
             await User.update(data, {
                 where : {
                     id

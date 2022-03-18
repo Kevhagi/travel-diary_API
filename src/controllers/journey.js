@@ -2,6 +2,7 @@ const { Journey, User } = require('../../models')
 
 const path = require('path')
 const fs = require('fs')
+const cloudinary = require('../utils/cloudinary');
 
 exports.addJourney = async (req,res) => {
     try {
