@@ -167,7 +167,7 @@ exports.uploadImage = async (req,res) => {
         })
 
         if (search.image === null){
-            const result = await cloudinary.uploader.upload(req.file.path, {
+            const result = cloudinary.uploader.upload(req.file.path, {
                 folder: 'traveldiary',
                 use_filename: true,
                 unique_filename: true,
@@ -189,10 +189,10 @@ exports.uploadImage = async (req,res) => {
             removeImage(search.image)
             */
 
-            await cloudinary.uploader.destroy(search.image, function(error, result) {
+            cloudinary.uploader.destroy(search.image, function(error, result) {
                 console.log(result, error);
             })
-            const addNew = await cloudinary.uploader.upload(req.file.path, {
+            const addNew = cloudinary.uploader.upload(req.file.path, {
                 folder: 'traveldiary',
                 use_filename: true,
                 unique_filename: true,
