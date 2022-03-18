@@ -166,46 +166,25 @@ exports.uploadImage = async (req,res) => {
             }
         })
 
-        if (search.image === null){
-            const result = cloudinary.uploader.upload(req.file.path, {
-                folder: 'traveldiary',
-                use_filename: true,
-                unique_filename: true,
-            });
-            const data = {
-                image : result.public_id
-            }
-            await User.update(data, {
-                where : {
-                    id
-                }
-            })
-        } else if (search.image !== null){
-            /* remove image locally
-            const removeImage = (filePath) => {
-                filePath = path.join(__dirname, '../../uploads/', filePath)
-                fs.unlink(filePath, err => console.log(err))
-            }
-            removeImage(search.image)
-            */
-
-            cloudinary.uploader.destroy(search.image, function(error, result) {
+        if (search.image !== null){
+            await cloudinary.uploader.destroy(search.image, function(error, result) {
                 console.log(result, error);
             })
-            const addNew = cloudinary.uploader.upload(req.file.path, {
-                folder: 'traveldiary',
-                use_filename: true,
-                unique_filename: true,
-            });
-            const data = {
-                image : addNew.public_id
-            }
-            await User.update(data, {
-                where : {
-                    id
-                }
-            })
         }
+
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'traveldiary',
+            use_filename: true,
+            unique_filename: true,
+        });
+        const data = {
+            image : result.public_id
+        }
+        await User.update(data, {
+            where : {
+                id
+            }
+        })
 
         res.status(200).send({
             image : process.env.FILE_PATH + data.image
