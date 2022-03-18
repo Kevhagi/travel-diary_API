@@ -19,9 +19,15 @@ exports.addJourney = async (req,res) => {
             })
         }
 
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'traveldiary',
+            use_filename: true,
+            unique_filename: true,
+        });
+
         let inputJourney = await Journey.create({
             ...data,
-            image : req.file.filename
+            image : result.public_id
         })
 
         inputJourney = JSON.parse(JSON.stringify(inputJourney))
