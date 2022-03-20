@@ -1,28 +1,23 @@
 const { Bookmark, User, Journey } = require('../../models')
 
-const jwt_decode = require('jwt-decode')
-
 exports.handleBookmark = async (req,res) => {
     try {
-        const token = req.header("Authorization")
-        var decoded = jwt_decode(token)
-
         var checkExist = await Bookmark.findOne({
             where : {
-                userID : decoded.id,
+                userID : req.user.id,
                 journeyID : req.body.idJourney
             }
         })
 
         if (checkExist === null) {
             var saveBookmark = await Bookmark.create({
-                userID : decoded.id,
+                userID : req.user.id,
                 journeyID : req.body.idJourney
             })
 
             var getUserDetails = await User.findOne({
                 where : {
-                    id : decoded.id
+                    id : req.user.id
                 }
             })
 
